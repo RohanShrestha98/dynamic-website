@@ -21,6 +21,16 @@ export default function SideBar() {
     },
     {
       id: 3,
+      name: "Add User",
+      link: "/add-user",
+    },
+    {
+      id: 4,
+      name: "Login",
+      link: "/login",
+    },
+    {
+      id: 10,
       name: "Settings",
       link: "/setting",
     },
