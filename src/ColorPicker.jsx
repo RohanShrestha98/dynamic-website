@@ -21,7 +21,11 @@ const ColorPicker = () => {
         <label htmlFor=""> Text Color Picker</label>
         <input
           type="color"
-          value={color || localStorage.getItem("textColor")}
+          value={
+            localStorage.getItem("textColor")
+              ? localStorage.getItem("textColor")
+              : color
+          }
           onChange={(e) => handleColorChange(e.target.value)}
         />
       </div>
@@ -29,7 +33,11 @@ const ColorPicker = () => {
         <label htmlFor=""> Background Color Picker</label>
         <input
           type="color"
-          value={background || localStorage.getItem("backgroundColor")}
+          value={
+            localStorage.getItem("backgroundColor")
+              ? localStorage.getItem("backgroundColor")
+              : background
+          }
           onChange={(e) => handleBackgroundColorChange(e.target.value)}
         />
       </div>

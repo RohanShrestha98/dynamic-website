@@ -1,23 +1,12 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function SideBar() {
-  const [color, setColor] = useState("");
-  const [background, setBackground] = useState("");
-
-  const localStorageColor = localStorage.getItem("textColor");
-  const localStorageBackgroundColor = localStorage.getItem("backgroundColor");
-
-  useEffect(() => {
-    const color = localStorage.getItem("textColor");
-    const background = localStorage.getItem("backgroundColor");
-    setColor(color);
-    setBackground(background);
-  }, [localStorageColor, localStorageBackgroundColor]);
+  const color = localStorage.getItem("textColor");
+  const background = localStorage.getItem("backgroundColor");
 
   const style = {
-    background: background,
-    color: color,
+    background: background ? background : "#000000",
+    color: color ? color : "#ffffff",
   };
   const sidebar = [
     {
@@ -26,12 +15,12 @@ export default function SideBar() {
       link: "/",
     },
     {
-      id: 1,
+      id: 2,
       name: "Add Products",
       link: "/add-product",
     },
     {
-      id: 1,
+      id: 3,
       name: "Settings",
       link: "/setting",
     },
@@ -41,7 +30,7 @@ export default function SideBar() {
       {sidebar.map((nav) => {
         return (
           <Link key={nav.id} to={nav.link}>
-            <p className="cursor-pointer">{nav.name}</p>
+            <p className="cursor-pointer">{nav?.name}</p>
           </Link>
         );
       })}
