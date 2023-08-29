@@ -2,17 +2,11 @@ import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useForm } from "react-hook-form";
 import { db } from "../../firebaseConfig";
 import { v4 as uuidv4 } from "uuid";
+import Button from "../../myComponents/Button";
+import InputField from "../../myComponents/InputField";
 
 export default function AddUser() {
   const { register, handleSubmit } = useForm();
-
-  const color = localStorage.getItem("textColor");
-  const background = localStorage.getItem("backgroundColor");
-
-  const style = {
-    background: background ? background : "#000000",
-    color: color ? color : "#ffffff",
-  };
   const myUUID = uuidv4();
 
   const handleAdd = async (data, uuid) => {
@@ -27,31 +21,29 @@ export default function AddUser() {
     <div className="w-full">
       <form
         onSubmit={handleSubmit((e) => handleAdd(e, myUUID))}
-        className="flex flex-col w-full gap-2"
+        className="flex flex-col w-2/5 gap-2"
       >
-        <input
-          className="border-blue-400 border w-2/5"
-          type="text"
-          {...register("name")}
+        <InputField
+          type={"text"}
+          registerName={"name"}
+          placeholder={"Enter your name"}
         />
-        <input
-          className="border-blue-400 border w-2/5"
-          type="email"
-          {...register("email")}
+        <InputField
+          type={"email"}
+          registerName={"email"}
+          placeholder={"Enter your email"}
         />
-        <select className="border-blue-400 border w-2/5" {...register("role")}>
+        <select className="border-blue-400 border" {...register("role")}>
           <option>Admin</option>
           <option>Staff</option>
           <option>User</option>
         </select>
-        <input
-          className="border-blue-400 border w-2/5"
-          type="password"
-          {...register("password")}
+        <InputField
+          type={"password"}
+          registerName={"password"}
+          placeholder={"Enter your password"}
         />
-        <button style={style} className="w-2/5">
-          Register Form
-        </button>
+        <Button title={"Register"} className="w-2/5" />
       </form>
     </div>
   );
