@@ -1,7 +1,12 @@
-import { useForm } from "react-hook-form";
+/* eslint-disable react/prop-types */
 
-export default function InputField({ placeholder, registerName, label, type }) {
-  const { register } = useForm();
+export default function InputField({
+  placeholder,
+  registerName,
+  label,
+  type,
+  register,
+}) {
   const background = localStorage.getItem("backgroundColor");
 
   const style = {

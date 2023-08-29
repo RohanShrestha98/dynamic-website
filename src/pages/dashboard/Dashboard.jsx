@@ -1,5 +1,12 @@
 /* eslint-disable react/prop-types */
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import { db } from "../../firebaseConfig";
 import Table from "../../myComponents/table";
@@ -18,6 +25,18 @@ export default function Dashboard() {
     await deleteDoc(doc(db, "auth", id));
   };
 
+  const handleUpdate = async (data) => {
+    await updateDoc(doc(db, "auth", data.id), {
+      data: {
+        name: "Hello",
+        email: data?.data?.email,
+        password: data?.data?.password,
+        role: data?.data?.role,
+      },
+      updateDate: serverTimestamp(),
+    });
+  };
+
   useEffect(() => {
     getData();
   }, [data]);
@@ -34,7 +53,7 @@ export default function Dashboard() {
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => row.data.name,
+        accessorFn: (row) => row?.name,
         // console.log(row);
         id: "title",
         cell: (info) => info.getValue(),
@@ -43,14 +62,14 @@ export default function Dashboard() {
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => row.data.email,
+        accessorFn: (row) => row?.email,
         id: "openDate",
         cell: (info) => info.getValue(),
         header: () => <span>Email</span>,
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => row.data.role,
+        accessorFn: (row) => row?.role,
         id: "dueDate",
         cell: (info) => info.getValue(),
         header: () => <span>Role</span>,
@@ -65,16 +84,20 @@ export default function Dashboard() {
       columnHelper.display({
         id: "actions",
         header: () => <>Actions</>,
-
         cell: ({ row }) => (
-          <div className="flex items-center gap-4">
-            Edit
-            <span
+          <div className="flex  gap-4">
+            <div
+              className="cursor-pointer"
+              onClick={() => handleUpdate(row.original)}
+            >
+              Edit
+            </div>
+            <div
+              className="cursor-pointer"
               onClick={() => handleDelete(row.original.id)}
-              className="flex cursor-pointer items-center text-grayHeading hover:text-dangerDark"
             >
               Delete
-            </span>
+            </div>
           </div>
         ),
       }),
