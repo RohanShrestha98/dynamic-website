@@ -68,6 +68,13 @@ export default function AddUser() {
           <option>Staff</option>
           <option>User</option>
         </select>
+        <input
+          type="file"
+          multiple
+          onChange={(event) => {
+            setImages(event.target.files);
+          }}
+        />
         <InputField
           type={"password"}
           registerName={"password"}
@@ -76,15 +83,6 @@ export default function AddUser() {
         />
         <Button title={"Register"} className="w-2/5" />
       </form>
-      <input
-        type="file"
-        multiple
-        onChange={(event) => {
-          setImages(event.target.files);
-        }}
-      />
-
-      <button onClick={uploadFiles}>Submit</button>
     </div>
   );
 }

@@ -10,8 +10,6 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { db } from "../../firebaseConfig";
 import Table from "../../myComponents/table";
-import { createColumnHelper } from "@tanstack/react-table";
-const columnHelper = createColumnHelper();
 
 export default function Dashboard() {
   const [data, setData] = useState();
@@ -22,17 +20,14 @@ export default function Dashboard() {
   };
 
   const handleDelete = async (id) => {
+    console.log("id", id);
     await deleteDoc(doc(db, "auth", id));
   };
 
   const handleUpdate = async (data) => {
+    console.log("data", data);
     await updateDoc(doc(db, "auth", data.id), {
-      data: {
-        name: "Hello",
-        email: data?.data?.email,
-        password: data?.data?.password,
-        role: data?.data?.role,
-      },
+      name: "Hello",
       updateDate: serverTimestamp(),
     });
   };
@@ -75,13 +70,7 @@ export default function Dashboard() {
         header: () => <span>Role</span>,
         footer: (props) => props.column.id,
       },
-    ],
-    []
-  );
-
-  const columnsAction = useMemo(
-    () => [
-      columnHelper.display({
+      {
         id: "actions",
         header: () => <>Actions</>,
         cell: ({ row }) => (
@@ -100,16 +89,66 @@ export default function Dashboard() {
             </div>
           </div>
         ),
-      }),
+      },
     ],
-    [data]
+    []
   );
+
+  const totalDetails = [
+    {
+      id: 1,
+      name: "Total",
+      number: "2100",
+      growth: "10%",
+    },
+    {
+      id: 2,
+      name: "Total",
+      number: "2100",
+      growth: "10%",
+    },
+    {
+      id: 3,
+      name: "Total",
+      number: "2100",
+      growth: "10%",
+    },
+    {
+      id: 4,
+      name: "Total",
+      number: "2100",
+      growth: "10%",
+    },
+  ];
+
   return (
-    <div>
-      Dashboard
-      <div>
-        <Table data={data || []} columns={columns.concat(columnsAction)} />
+    <div className="p-4 bg-[#f9f9fc]">
+      <div className="flex gap-3 flex-grow">
+        {totalDetails?.map((item) => {
+          return (
+            <div
+              key={item.id}
+              className="flex-1 bg-white border p-4 rounded-md"
+            >
+              <h2>{item?.name}</h2>
+              <div className="flex gap-2">
+                <h1>{item?.number}</h1>
+                <p>{item?.growth}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
+      <Table data={data || []} columns={columns} />
+      {/* {data?.map((item) => {
+        return (
+          <div key={item.id} className="flex gap-4">
+            {item?.images?.map((img) => {
+              return <img key={img} src={img} className="w-1/4" />;
+            })}
+          </div>
+        );
+      })} */}
     </div>
   );
 }

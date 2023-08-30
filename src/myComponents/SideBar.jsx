@@ -8,7 +8,6 @@ export default function SideBar() {
 
   const style = {
     color: color ? color : "#ffffff",
-    background: background ? background : "#000000",
   };
   const activeStyle = {
     color: background ? background : "#000000",
@@ -43,12 +42,18 @@ export default function SideBar() {
   ];
 
   return (
-    <div style={style} className="w-full h-[100vh]">
+    <div
+      style={style}
+      className="w-full h-[100vh] sticky px-6 py-2 top-0 border-r-2"
+    >
+      <h1 className="text-3xl font-bold mb-4" style={style}>
+        Phonex
+      </h1>
       {sidebar.map((nav) => {
         return (
           <Link key={nav.id} to={nav.link} className="">
             <p
-              className="cursor-pointer border pl-4 py-2 mb-2"
+              className="cursor-pointer border rounded-md pl-4 py-2 mb-2"
               onClick={() => setPathname(nav.link)}
               style={pathname === nav.link ? activeStyle : {}}
             >
