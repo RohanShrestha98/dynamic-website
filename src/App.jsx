@@ -4,8 +4,9 @@ import AdminPannelLayout from "./layout/AdminPannelLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Setting from "./pages/settings/Setting";
 import AddUser from "./pages/product/AddUser";
-import AddProduct from "./pages/product/AddProduct";
 import LoginForm from "./pages/auth/LoginForm";
+import AddProduct from "./pages/productPage/AddProduct";
+import "./App.css";
 
 const App = () => {
   return (

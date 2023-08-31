@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-export default function InputField({
+export default function TextArea({
   placeholder,
   registerName,
   label,
@@ -12,9 +12,9 @@ export default function InputField({
   return (
     <div className={className}>
       <label>{label}</label>
-      <input
+      <textarea
         type={type}
-        className={`w-full  mt-1 px-3 rounded outline-none ${classes}`}
+        className={`w-full mt-1 px-3 py-2 rounded outline-none ${classes}`}
         placeholder={placeholder}
         {...register(registerName)}
       />

@@ -14,7 +14,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
-export default function AddProduct() {
+export default function AllFunction() {
   const [data, setData] = useState([]);
   const handleAdd = async () => {
     await setDoc(doc(db, "cities", uuidv4()), {
