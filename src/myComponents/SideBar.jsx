@@ -21,16 +21,21 @@ export default function SideBar() {
     },
     {
       id: 2,
+      name: "Add Category",
+      link: "/add-category",
+    },
+    {
+      id: 3,
       name: "Add Products",
       link: "/add-product",
     },
     {
-      id: 3,
+      id: 4,
       name: "Add User",
       link: "/add-user",
     },
     {
-      id: 4,
+      id: 5,
       name: "Login",
       link: "/login",
     },
