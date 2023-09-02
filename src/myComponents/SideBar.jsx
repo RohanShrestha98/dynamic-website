@@ -25,6 +25,11 @@ export default function SideBar() {
       link: "/add-category",
     },
     {
+      id: 6,
+      name: "Category",
+      link: "/category",
+    },
+    {
       id: 3,
       name: "Add Products",
       link: "/add-product",

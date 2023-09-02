@@ -1,15 +1,9 @@
 /* eslint-disable react/prop-types */
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import { db } from "../../firebaseConfig";
 import Table from "../../myComponents/table";
+import { Link } from "react-router-dom";
 
 export default function Category() {
   const [data, setData] = useState();
@@ -20,18 +14,11 @@ export default function Category() {
   };
   useEffect(() => {
     getData();
-  }, [data]);
+  }, []);
   const handleDelete = async (id) => {
-    await deleteDoc(doc(db, "auth", id));
+    await deleteDoc(doc(db, "category", id));
   };
 
-  const handleUpdate = async (data) => {
-    console.log("data", data);
-    await updateDoc(doc(db, "auth", data.id), {
-      name: "Hello",
-      updateDate: serverTimestamp(),
-    });
-  };
   const columns = useMemo(
     () => [
       {
@@ -43,8 +30,23 @@ export default function Category() {
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => row?.name,
-        // console.log(row);
+        id: "image",
+        header: () => <>Thumbnail</>,
+        cell: ({ row }) => (
+          <div className="flex gap-4">
+            <img
+              className="h-14 rounded-xl"
+              src={row.original.images[0]}
+              alt=""
+            />
+          </div>
+        ),
+      },
+      {
+        accessorFn: (row) => {
+          return row?.category_name;
+        },
+
         id: "title",
         cell: (info) => info.getValue(),
         header: () => <span>Name</span>,
@@ -52,17 +54,10 @@ export default function Category() {
         footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => row?.email,
-        id: "openDate",
+        accessorFn: (row) => row?.category_description,
+        id: "description",
         cell: (info) => info.getValue(),
-        header: () => <span>Email</span>,
-        footer: (props) => props.column.id,
-      },
-      {
-        accessorFn: (row) => row?.role,
-        id: "dueDate",
-        cell: (info) => info.getValue(),
-        header: () => <span>Role</span>,
+        header: () => <span>Description</span>,
         footer: (props) => props.column.id,
       },
       {
@@ -70,12 +65,13 @@ export default function Category() {
         header: () => <>Actions</>,
         cell: ({ row }) => (
           <div className="flex  gap-4">
-            <div
+            <Link
+              to="/add-category"
+              state={{ data: row.original }}
               className="cursor-pointer"
-              onClick={() => handleUpdate(row.original)}
             >
               Edit
-            </div>
+            </Link>
             <div
               className="cursor-pointer"
               onClick={() => handleDelete(row.original.id)}
@@ -89,7 +85,7 @@ export default function Category() {
     []
   );
   return (
-    <div>
+    <div className="p-4">
       <Table data={data || []} columns={columns} />
     </div>
   );

@@ -20,7 +20,6 @@ export default function Dashboard() {
   };
 
   const handleDelete = async (id) => {
-    console.log("id", id);
     await deleteDoc(doc(db, "auth", id));
   };
 

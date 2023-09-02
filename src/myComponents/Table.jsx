@@ -51,7 +51,7 @@ const Table = ({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className={`group py-3 text-start font-semibold first:pl-4 last:pr-4 first:w-[100px] `}
+                    className={`group py-3 text-start font-semibold first:pl-4  last:pr-4 first:w-[100px] `}
                     onClick={header.column.getToggleSortingHandler()}
                   >
                     <div className="flex items-center  justify-between">

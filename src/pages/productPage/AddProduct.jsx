@@ -2,16 +2,26 @@ import { useForm } from "react-hook-form";
 import Button from "../../myComponents/Button";
 import InputField from "../../myComponents/InputField";
 import TextArea from "../../myComponents/TextArea";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { db, storage } from "../../firebaseConfig";
 import { v4 as uuidv4 } from "uuid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import ReactSelect from "../../myComponents/Select";
 
 export default function AddProduct() {
-  const { register } = useForm();
+  const { register, watch, control } = useForm();
   const myUUID = uuidv4();
   const [images, setImages] = useState();
+  const [featureField, setFeatureField] = useState([]);
 
   const uploadFiles = async () => {
     const downloadUrls = [];
@@ -59,6 +69,39 @@ export default function AddProduct() {
           </div>
         );
       });
+  const [data, setData] = useState();
+  const getData = async () => {
+    const querySnapshot = await getDocs(collection(db, "category"));
+    const data = querySnapshot.docs.map((doc) => doc.data());
+    setData(data);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const categoryOption = data?.map((item) => {
+    return {
+      value: item?.id,
+      label: item?.category_name,
+    };
+  });
+  const productCategory = watch("product_category");
+
+  const handleDyanmicFeatureField = async () => {
+    const q = query(
+      collection(db, "category"),
+      where("id", "==", productCategory?.value)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      setFeatureField(doc.data()?.category_inputfield);
+    });
+  };
+
+  useEffect(() => {
+    handleDyanmicFeatureField();
+  }, [productCategory !== null]);
 
   const handleAdd = async (data, uuid) => {
     console.log("data", data);
@@ -149,58 +192,68 @@ export default function AddProduct() {
             </div>
           </div>
           <div className="border bg-white w-full  rounded-lg p-4">
-            <h1 className="font-medium text-xl mb-2">Pricing</h1>
+            <div className="flex items-center justify-between">
+              <h1 className="font-medium text-xl mb-2">Product Features</h1>
+            </div>
+
             <div className="flex flex-wrap gap-[2%]">
-              <InputField
-                className={" w-full "}
-                placeholder={"Enter the product name"}
-                registerName={"product_name"}
-                label={"Product Name"}
-                type={"text"}
-                classes={"bg-[#f9f9fcff] h-10 border"}
-                register={register}
-              />
-              <InputField
-                className={" w-[49%] mt-3"}
-                placeholder={"Enter the product name"}
-                registerName={"product_name"}
-                label={"Product Name"}
-                type={"text"}
-                classes={"bg-[#f9f9fcff] h-10 border"}
-                register={register}
-              />
-              <InputField
-                className={" w-[49%] mt-3"}
-                placeholder={"Enter the product description here ..."}
-                registerName={"product_description"}
-                label={"Product Description"}
-                type={"textarea"}
-                classes={"bg-[#f9f9fcff] h-10 border"}
-                register={register}
-              />
-              <InputField
-                className={" w-[49%] mt-3"}
-                placeholder={"Enter the product name"}
-                registerName={"product_name"}
-                label={"Product Name"}
-                type={"text"}
-                classes={"bg-[#f9f9fcff] h-10 border"}
-                register={register}
-              />
-              <InputField
-                className={" w-[49%] mt-3"}
-                placeholder={"Enter the product description here ..."}
-                registerName={"product_description"}
-                label={"Product Description"}
-                type={"textarea"}
-                classes={"bg-[#f9f9fcff] h-10 border"}
-                register={register}
-              />
+              {featureField?.map((item) => {
+                return (
+                  <InputField
+                    key={item}
+                    className={" w-[49%] mt-3"}
+                    placeholder={`Enter the ${item} name`}
+                    registerName={item.toLowerCase()}
+                    label={item}
+                    type={"text"}
+                    classes={"bg-[#f9f9fcff] h-10 border"}
+                    register={register}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>
-        <div className="w-1/4 h-52 ">
-          <div className="border bg-white w-full h-32 rounded-lg"></div>
+        <div className="w-1/4 flex flex-col gap-6">
+          <div className="border bg-white w-full rounded-lg px-4 pb-6 pt-4">
+            <h1 className="font-medium text-xl mb-2">Category</h1>
+            <ReactSelect
+              options={categoryOption}
+              title={"Product Category"}
+              control={control}
+              registerName={"product_category"}
+            />
+          </div>
+          <div className="border bg-white w-full rounded-lg px-4 pb-6 pt-4">
+            <h1 className="font-medium text-xl mb-2">Pricing</h1>
+            <InputField
+              className={" w-full "}
+              placeholder={"Enter the marked price"}
+              registerName={"marked_price"}
+              label={"Marked Price"}
+              type={"number"}
+              classes={"bg-[#f9f9fcff] h-10 border"}
+              register={register}
+            />
+            <InputField
+              className={" w-full mt-4 "}
+              placeholder={"Enter the discount percentage"}
+              registerName={"discount_percentage"}
+              label={"Discount Percentage"}
+              type={"number"}
+              classes={"bg-[#f9f9fcff] h-10 border"}
+              register={register}
+            />
+            <InputField
+              className={" w-full mt-4 "}
+              placeholder={"Enter the VAT percentage"}
+              registerName={"vat_percentage"}
+              label={"VAT Percentage"}
+              type={"number"}
+              classes={"bg-[#f9f9fcff] h-10 border"}
+              register={register}
+            />
+          </div>
         </div>
       </div>
     </div>

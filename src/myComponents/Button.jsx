@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 export default function Button({ title }) {
   const color = localStorage.getItem("textColor");
   const background = localStorage.getItem("backgroundColor");

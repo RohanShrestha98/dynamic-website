@@ -4,14 +4,19 @@ import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 import { db, storage } from "../../firebaseConfig";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import InputField from "../../myComponents/InputField";
 import TextArea from "../../myComponents/TextArea";
+import { useLocation, useNavigate } from "react-router-dom";
+import KeywordSelect from "../../myComponents/KeywordSelect";
 
 export default function AddCategory() {
   const { register, handleSubmit } = useForm();
   const myUUID = uuidv4();
   const [images, setImages] = useState();
+  const [tags, setTags] = useState([]);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const uploadFiles = async () => {
     const downloadUrls = [];
@@ -49,7 +54,11 @@ export default function AddCategory() {
             className="w-28 h-32 flex flex-col items-center justify-center border bg-gray-50 border-gray-500 rounded-md"
           >
             <img
-              src={imageUrl}
+              src={
+                location?.state?.data?.images[0]
+                  ? location?.state?.data?.images[0]
+                  : imageUrl
+              }
               alt={file.name}
               className="w-full object-fill h-full"
             />
@@ -63,6 +72,12 @@ export default function AddCategory() {
         );
       });
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent the default form submission
+    }
+  };
+
   const handleAdd = async (data, uuid) => {
     console.log("data", data);
     try {
@@ -70,39 +85,69 @@ export default function AddCategory() {
       await setDoc(doc(db, "category", uuid), {
         ...data,
         id: uuid,
+        category_inputfield: tags,
         createdDate: serverTimestamp(),
         images: imageUrls,
       });
       console.log("Category thumbnail and images added successfully!");
+      navigate("/category");
     } catch (err) {
       console.log("Error adding Category thumbnail:", err);
     }
   };
+
+  const handleUpdate = async (data) => {
+    console.log("data", data);
+    try {
+      await updateDoc(doc(db, "category", location?.state?.data?.id), {
+        ...data,
+
+        updateDate: serverTimestamp(),
+      });
+      navigate("/category");
+    } catch (err) {
+      console.log("error", err);
+    }
+  };
+
   return (
     <div className="p-4 bg-slate-50 h-[92vh]">
       <div className="flex items-center justify-between">
         <p className="text-2xl font-semibold">Add Category </p>
         <div className="w-40">{/* <Button title={"Add Category"} /> */}</div>
       </div>
-      <form onSubmit={handleSubmit((e) => handleAdd(e, myUUID))}>
+      <form
+        onSubmit={handleSubmit(
+          location?.state?.data?.category_name
+            ? (e) => handleUpdate(e)
+            : (e) => handleAdd(e, myUUID)
+        )}
+      >
         <div className="flex flex-grow gap-4 mt-4">
           <div className="w-1/4 flex h-52 bg-white flex-col gap-6">
             <div className="border bg-white w-full  rounded-lg p-4">
               <h1 className="font-medium text-xl mb-2">Thumbnail</h1>
               <p className="mb-2">Photo</p>
-              <div className="flex flex-col items-center border border-dashed p-12 rounded-md">
+              <div className="flex flex-col items-center border border-dashed p-8 rounded-md">
                 <div className=" flex gap-3 mb-4">
                   {images &&
+                    !location?.state?.data?.images[0] &&
                     fileList?.map((item) => {
                       return <div key={item}> {item}</div>;
                     })}
+                  {location?.state?.data?.images[0] && (
+                    <img
+                      className="rounded-lg"
+                      src={location?.state?.data?.images[0]}
+                    />
+                  )}
                 </div>
-                {!images && (
+                {!images && !location?.state?.data?.images[0] && (
                   <p className="mb-2 text-sm text-center">
                     You can select images here
                   </p>
                 )}
-                {!images && (
+                {!images && !location?.state?.data?.images[0] && (
                   <>
                     <label
                       htmlFor="images"
@@ -127,6 +172,7 @@ export default function AddCategory() {
             <div className="border bg-white w-full  rounded-lg p-4">
               <h1 className="font-medium text-xl mb-2">General Information</h1>
               <InputField
+                defaultValue={location?.state?.data?.category_name}
                 placeholder={"Enter the category name"}
                 registerName={"category_name"}
                 label={"Category Name"}
@@ -135,6 +181,7 @@ export default function AddCategory() {
                 register={register}
               />
               <TextArea
+                defaultValue={location?.state?.data?.category_description}
                 className={"mt-4"}
                 placeholder={"Enter the category description here ..."}
                 registerName={"category_description"}
@@ -146,10 +193,26 @@ export default function AddCategory() {
             </div>
           </div>
         </div>
+        <div>
+          <KeywordSelect
+            title={
+              "Enter the Input Field you want add as an feature description in this category"
+            }
+            id="catagory_inputfield "
+            tags={tags}
+            setTags={setTags}
+          />
+        </div>
         <div className="flex items-center justify-between">
           <div></div>
           <div className="w-40 mt-4">
-            <Button title={"Add Category"} />
+            <Button
+              title={
+                location?.state?.data?.category_name
+                  ? "Update Category"
+                  : "Add Category"
+              }
+            />
           </div>
         </div>
       </form>
