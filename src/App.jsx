@@ -9,6 +9,7 @@ import AddProduct from "./pages/productPage/AddProduct";
 import "./App.css";
 import AddCategory from "./pages/category/AddCategory";
 import Category from "./pages/category/Category";
+import Product from "./pages/productPage/Product";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route element={<AdminPannelLayout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/add-user" element={<AddUser />} />
+          <Route path="/product" element={<Product />} />
           <Route path="/add-product" element={<AddProduct />} />
           <Route path="/category" element={<Category />} />
           <Route path="/add-category" element={<AddCategory />} />

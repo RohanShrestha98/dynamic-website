@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import Button from "../../myComponents/Button";
 import { v4 as uuidv4 } from "uuid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { db, storage } from "../../firebaseConfig";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
@@ -72,12 +72,6 @@ export default function AddCategory() {
         );
       });
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault(); // Prevent the default form submission
-    }
-  };
-
   const handleAdd = async (data, uuid) => {
     console.log("data", data);
     try {
@@ -101,7 +95,7 @@ export default function AddCategory() {
     try {
       await updateDoc(doc(db, "category", location?.state?.data?.id), {
         ...data,
-
+        category_inputfield: tags,
         updateDate: serverTimestamp(),
       });
       navigate("/category");
@@ -109,6 +103,12 @@ export default function AddCategory() {
       console.log("error", err);
     }
   };
+
+  useEffect(() => {
+    if (location?.state?.data?.category_inputfield) {
+      setTags(location?.state?.data?.category_inputfield);
+    }
+  }, [location?.state?.data?.category_inputfield]);
 
   return (
     <div className="p-4 bg-slate-50 h-[92vh]">
